@@ -8,7 +8,7 @@
 
 ### <p align="center">  💡 _Now I am going to present you my New Game_ 💡 </p>
 
-<p align="center"><img src="game_pic.png"></p>
+<p align="center"><img src="game_gif.gif"></p>
 
 ###  <p align="center">⚒️ _Yes, This is Tic-Tac-Toe Game made by Python(Version 3) Tkinter_</p>
 
