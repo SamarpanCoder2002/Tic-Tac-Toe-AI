@@ -69,7 +69,7 @@ class TIC_TAC_TOE_AI:
         self.human_first_control['state'] = NORMAL
         self.reset_btn['state'] = DISABLED
     
-    def game_over_management(self, indicator=0):# After game over some works
+    def game_over_management(self):# After game over some works
         for every in self.activate_btn:
             every.config(state=DISABLED)
         self.reset_btn['state'] = NORMAL
@@ -186,9 +186,15 @@ class TIC_TAC_TOE_AI:
                         if opposite[2] not in self.sign_store.keys():
                             self.prob.append(opposite[2])
                     else:
-                        self.__sign_insert(4)
-                        self.machine_cover.append(4)
-                        self.prob.append(opposite[4])
+                        temp = [4,6,8]
+                        take_total = self.human_cover+self.machine_cover
+                        for x in take_total:
+                            if x in temp:
+                                temp.remove(x)
+                        take_choice = random.choice(temp)
+                        self.__sign_insert(take_choice)
+                        self.machine_cover.append(take_choice)
+                        self.prob.append(opposite[take_choice])
 
             elif self.technique == 2:
                 human_last = self.human_cover[len(self.human_cover)-1]
@@ -215,8 +221,7 @@ class TIC_TAC_TOE_AI:
             if self.technique == 1:
                 if self.prob[0] != human_input:
                     self.__sign_insert(self.prob[0])
-                    messagebox.showinfo("Game Over", "Computer is winner") 
-                    self.game_over_management(1)
+                    self.machine_line_match()
                 else:
                     if self.technique == 1:
                         try:
@@ -255,8 +260,7 @@ class TIC_TAC_TOE_AI:
                                 self.machine_cover.append(value_predict)
                         except:
                             self.__sign_insert(self.machine_cover[1]+3)  
-                            messagebox.showinfo("Game Over", "Computer is winner") 
-                            self.game_over_management(1)
+                            self.machine_line_match()
                     else:
                         try:
                             if self.sign_store[self.machine_cover[1]+1] == "O":
@@ -273,8 +277,7 @@ class TIC_TAC_TOE_AI:
                         except:
                             self.__sign_insert(self.machine_cover[1]+1)  
                             self.machine_cover.append(self.machine_cover[1]+1)
-                            messagebox.showinfo("Game Over", "Computer is winner") 
-                            self.game_over_management(1)
+                            self.machine_line_match()
             else:
                 if self.prob:
                     self.prob.clear()
@@ -299,123 +302,120 @@ class TIC_TAC_TOE_AI:
                         self.prob.append(6)
                     
         elif self.chance_counter == 6:
-            opposite = {1:9, 2:8, 3:7, 4:6, 6:4, 7:3, 8:2, 9:1}
-            human_last = self.human_cover[len(self.human_cover)-1]
-            if self.technique == 1:
-                if self.prob and human_last != self.prob[0]:
-                    self.__sign_insert(self.prob[0])
-                    self.machine_cover.append(self.prob[0])
-                    messagebox.showinfo("Game Over", "Computer is winner")
-                    self.game_over_management(1)
-                
-                elif len(self.prob) == 0:
-                    if human_last+3 == 7 or human_last+3 == 9:
-                        take_place = human_last+3
-                    elif human_last-3 == 1 or human_last-3 == 3:
-                        take_place = human_last-3
-                    elif human_last-3 == 4 or human_last-3 == 6:
-                        take_place = human_last-3
-                    elif human_last+3 == 4 or human_last+3 == 6:
-                        take_place = human_last+3
-                    
-                    self.__sign_insert(take_place)
-                    self.machine_cover.append(take_place)
-                    self.prob.append(opposite[take_place])
-
-                else:
-                    if self.prob:
-                        self.prob.clear()
-                    if human_last%2 == 0:
-                        if human_last == 8:
-                            if (human_last+1==3 or human_last+1==9) and human_last + 1 not in self.sign_store.keys():
-                                place_here = human_last + 1
-                            elif (human_last-1==1 or human_last-1==7) and human_last - 1 not in self.sign_store.keys(): 
-                                place_here = human_last - 1
-                            elif (human_last-3==1 or human_last-3==3) and human_last - 3 not in self.sign_store.keys(): 
-                                place_here = human_last - 3
-                            else:
-                                place_here = human_last + 3
-                            
-                            self.__sign_insert(place_here)
-                            self.machine_cover.append(place_here)
-                            temp_oppo = {7: 3, 3: 7, 1: 9, 9: 1}
-                            self.prob.append(temp_oppo[place_here])
-
-                        else:
-                            take_center_surr = list(self.surrounding_store[5])
-                            temp_store = self.human_cover+self.machine_cover
-                            for element in temp_store:
-                                try:
-                                    take_center_surr.remove(element)
-                                except:
-                                    pass
-                            
-                            if take_center_surr:
-                                if (human_last+3==7 or human_last+3==9) or human_last+3 in self.sign_store.keys():
-                                    take_place = human_last-3
-                                else:
-                                    
-                                    take_place = random.choice(take_center_surr)
-                                    take_center_surr.remove(take_place)
-                                self.__sign_insert(take_place)
-                                self.machine_cover.append(take_place)
-                                self.surrounding_store[5] = tuple(take_center_surr)
-                                self.prob.append(opposite[take_place])
-                            else:
-                                for every in opposite.keys():
-                                    if every%2 != 0 and opposite[every] not in self.sign_store.keys():
-                                        self.__sign_insert(every)
-                                        self.machine_cover.append(every)
-                                        self.prob.append(opposite[every])
-                                        if (every+6 == 7 or every+6 == 9) and (every+6 not in self.sign_store.keys()):
-                                            self.prob.append(every+6)
-                                        elif (every-6 == 1 or every-6 == 3) and (every-6 not in self.sign_store.keys()):
-                                            self.prob.append(every-6)
-                                        elif (every-2 == 1 or every-2 == 7) and (every-2 not in self.sign_store.keys()):
-                                            self.prob.append(every-2)
-                                        else:
-                                            self.prob.append(every+2)
-                                        break
-                    else:
-                        take_surr = self.surrounding_store[human_last]
-                        for element in take_surr:
-                            if element in self.sign_store.keys():
-                                pass
-                            else:
-                                self.__sign_insert(element)
-                                self.machine_cover.append(element)
-                                if opposite[element] not in self.sign_store.keys():
-                                    self.prob.append(opposite[element])
-                                break
-            
-            else:
-                if len(self.prob) == 2:
-                    if human_last in self.prob:
-                        
-                        if self.prob[1] != human_last:
-                            self.__sign_insert(self.prob[1])
-                            self.machine_cover.append(self.prob[1])
-                            messagebox.showinfo("Game Over", "Computer in winner")
-                            self.game_over_management(1)
-                        else:
-                            self.__sign_insert(self.prob[0])
-                            self.machine_cover.append(self.prob[0])
-                            self.prob.clear()
-                            self.prob.append(2)
-                    else:
-                        self.__sign_insert(self.prob[1])
-                        self.machine_cover.append(self.prob[1])
-                        messagebox.showinfo("Game Over", "Computer in winner")
-                        self.game_over_management(1)
-                else:
-                    if human_last != self.prob[0]:
+            if self.human_line_match():
+                opposite = {1:9, 2:8, 3:7, 4:6, 6:4, 7:3, 8:2, 9:1}
+                human_last = self.human_cover[len(self.human_cover)-1]
+                if self.technique == 1:
+                    if self.prob and human_last != self.prob[0]:
                         self.__sign_insert(self.prob[0])
                         self.machine_cover.append(self.prob[0])
-                        messagebox.showinfo("Game Over", "Computer in winner")
-                        self.game_over_management(1)
+                        self.machine_line_match()
+                    
+                    elif len(self.prob) == 0:
+                        if human_last+3 == 7 or human_last+3 == 9:
+                            take_place = human_last+3
+                        elif human_last-3 == 1 or human_last-3 == 3:
+                            take_place = human_last-3
+                        elif human_last-3 == 4 or human_last-3 == 6:
+                            take_place = human_last-3
+                        elif human_last+3 == 4 or human_last+3 == 6:
+                            take_place = human_last+3
+                        
+                        self.__sign_insert(take_place)
+                        self.machine_cover.append(take_place)
+                        self.prob.append(opposite[take_place])
+
                     else:
-                        self.__sign_insert(opposite[self.prob[0]])
-                        self.machine_cover.append(opposite[self.prob[0]])
+                        if self.prob:
+                            self.prob.clear()
+                        if human_last%2 == 0:
+                            if human_last == 8:
+                                if (human_last+1==3 or human_last+1==9) and human_last + 1 not in self.sign_store.keys():
+                                    place_here = human_last + 1
+                                elif (human_last-1==1 or human_last-1==7) and human_last - 1 not in self.sign_store.keys(): 
+                                    place_here = human_last - 1
+                                elif (human_last-3==1 or human_last-3==3) and human_last - 3 not in self.sign_store.keys(): 
+                                    place_here = human_last - 3
+                                else:
+                                    place_here = human_last + 3
+                                
+                                self.__sign_insert(place_here)
+                                self.machine_cover.append(place_here)
+                                temp_oppo = {7: 3, 3: 7, 1: 9, 9: 1}
+                                self.prob.append(temp_oppo[place_here])
+
+                            else:
+                                take_center_surr = list(self.surrounding_store[5])
+                                temp_store = self.human_cover+self.machine_cover
+                                for element in temp_store:
+                                    try:
+                                        take_center_surr.remove(element)
+                                    except:
+                                        pass
+                                
+                                if take_center_surr:
+                                    if (human_last+3==7 or human_last+3==9) or human_last+3 in self.sign_store.keys():
+                                        take_place = human_last-3
+                                    else:
+                                        take_place = random.choice(take_center_surr)
+                                        take_center_surr.remove(take_place)
+                                    self.__sign_insert(take_place)
+                                    self.machine_cover.append(take_place)
+                                    self.surrounding_store[5] = tuple(take_center_surr)
+                                    self.prob.append(opposite[take_place])
+                                else:
+                                    for every in opposite.keys():
+                                        if every%2 != 0 and opposite[every] not in self.sign_store.keys():
+                                            self.__sign_insert(every)
+                                            self.machine_cover.append(every)
+                                            self.prob.append(opposite[every])
+                                            if (every+6 == 7 or every+6 == 9) and (every+6 not in self.sign_store.keys()):
+                                                self.prob.append(every+6)
+                                            elif (every-6 == 1 or every-6 == 3) and (every-6 not in self.sign_store.keys()):
+                                                self.prob.append(every-6)
+                                            elif (every-2 == 1 or every-2 == 7) and (every-2 not in self.sign_store.keys()):
+                                                self.prob.append(every-2)
+                                            else:
+                                                self.prob.append(every+2)
+                                            break
+                        else:
+                            take_surr = self.surrounding_store[human_last]
+                            for element in take_surr:
+                                if element in self.sign_store.keys():
+                                    pass
+                                else:
+                                    self.__sign_insert(element)
+                                    self.machine_cover.append(element)
+                                    if opposite[element] not in self.sign_store.keys():
+                                        self.prob.append(opposite[element])
+                                    break
+                
+                else:
+                    if len(self.prob) == 2:
+                        if human_last in self.prob:
+                            
+                            if self.prob[1] != human_last:
+                                self.__sign_insert(self.prob[1])
+                                self.machine_cover.append(self.prob[1])
+                                self.machine_line_match()
+
+                            else:
+                                self.__sign_insert(self.prob[0])
+                                self.machine_cover.append(self.prob[0])
+                                self.prob.clear()
+                                self.prob.append(2)
+                        else:
+                            self.__sign_insert(self.prob[1])
+                            self.machine_cover.append(self.prob[1])
+                            self.machine_line_match()
+                    else:
+                        if human_last != self.prob[0]:
+                            self.__sign_insert(self.prob[0])
+                            self.machine_cover.append(self.prob[0])
+                            self.machine_line_match()
+                        else:
+                            self.__sign_insert(opposite[self.prob[0]])
+                            self.machine_cover.append(opposite[self.prob[0]])
         
         elif self.chance_counter == 7:
             human_input = self.human_cover[len(self.human_cover)-1]
@@ -424,21 +424,19 @@ class TIC_TAC_TOE_AI:
                     self.__sign_insert(self.prob[1])  
                 else:
                     self.__sign_insert(self.prob[0])  
-                messagebox.showinfo("Game Over", "Computer is winner")
-                self.game_over_management(1)
+                self.machine_line_match()
+
             elif self.technique == 2:
                 if human_input in self.prob:
                     self.prob.remove(human_input) 
                 self.__sign_insert(self.prob[0])  
-                messagebox.showinfo("Game Over", "Computer is winner")      
-                self.game_over_management(1)
+                self.machine_line_match()
             else:
                 if self.technique == 3.2:
                     if human_input in self.prob:
                         self.prob.remove(human_input)
                     self.__sign_insert(self.prob[0])  
-                    messagebox.showinfo("Game Over", "Computer is winner")
-                    self.game_over_management(1)
+                    self.machine_line_match()
                 else:
                     if human_input in self.prob:
                         self.prob.clear()
@@ -449,56 +447,64 @@ class TIC_TAC_TOE_AI:
                         self.prob.append(next_human_prob[machine_next_chance[human_input]][1])
                     else:
                         self.__sign_insert(self.prob[0])
-                        messagebox.showinfo("Game Over", "Computer is winner")  
-                        self.game_over_management(1)    
+                        self.machine_line_match()
 
         elif self.chance_counter == 8:
-            human_last = self.human_cover[len(self.human_cover)-1]
-            opposite = {1:9, 2:8, 3:7, 4:6, 6:4, 7:3, 8:2, 9:1}
-            
-            if self.technique == 1:
-                if self.prob and human_last not in self.prob:
-                    self.__sign_insert(self.prob[0])
-                    self.machine_cover.append(self.prob[0])
-                    messagebox.showinfo("Game Over", "Computer is winner")
-                    self.game_over_management(1)
+            if self.human_line_match():
+                human_last = self.human_cover[len(self.human_cover)-1]
+                opposite = {1:9, 2:8, 3:7, 4:6, 6:4, 7:3, 8:2, 9:1}
+                
+                if self.technique == 1:
+                    if self.prob and human_last not in self.prob:
+                        if self.prob[0] not in self.sign_store.keys():
+                            self.__sign_insert(self.prob[0])
+                            self.machine_cover.append(self.prob[0])
+                        else:
+                            temp=[1,2,3,4,5,6,7,8,9]
+                            temp_store = self.machine_cover + self.human_cover
+                            for x in temp_store:
+                                if x in temp:
+                                    temp.remove(x)
+                            take_choice = random.choice(temp)
+                            self.__sign_insert(take_choice)
+                            self.machine_cover.append(take_choice)
+                        self.machine_line_match()
 
-                elif len(self.prob) == 0:
-                    self.__sign_insert(human_last+2)
-                    self.machine_cover.append(human_last+2)
-
-                else:
-                    if len(self.prob) == 2:
-                        if human_last in self.prob:
-                            self.prob.remove(human_last)
-                        self.__sign_insert(self.prob[0])
-                        self.machine_cover.append(self.prob[0])
-                        messagebox.showinfo("Game Over", "Computer is winner")
-                        self.game_over_management(1)
+                    elif len(self.prob) == 0:
+                        self.__sign_insert(human_last+2)
+                        self.machine_cover.append(human_last+2)
 
                     else:
-                        take_surr = self.surrounding_store[human_last]
-                        for element in take_surr:
-                            if element in self.sign_store.keys():
-                                pass
-                            else:
-                                self.__sign_insert(element)
-                                self.machine_cover.append(element)
-                                break
+                        if len(self.prob) == 2:
+                            if human_last in self.prob:
+                                self.prob.remove(human_last)
+                            self.__sign_insert(self.prob[0])
+                            self.machine_cover.append(self.prob[0])
+                            self.machine_line_match()
 
-            else:
-                if opposite[human_last] not in self.sign_store.keys():
-                    self.__sign_insert(opposite[human_last])
-                    self.machine_cover.append(opposite[human_last])
+                        else:
+                            take_surr = self.surrounding_store[human_last]
+                            for element in take_surr:
+                                if element in self.sign_store.keys():
+                                    pass
+                                else:
+                                    self.__sign_insert(element)
+                                    self.machine_cover.append(element)
+                                    break
+
                 else:
-                    temp_store = [1,2,3,4,5,6,7,8,9]
-                    temp_total = self.machine_cover+self.human_cover
-                    for element in temp_store:
-                        if element in temp_total:
-                            temp_store.remove(element)
-                    take_choice = random.choice(temp_store)
-                    self.__sign_insert(take_choice)
-                    self.machine_cover.append(take_choice)
+                    if opposite[human_last] not in self.sign_store.keys():
+                        self.__sign_insert(opposite[human_last])
+                        self.machine_cover.append(opposite[human_last])
+                    else:
+                        temp_store = [1,2,3,4,5,6,7,8,9]
+                        temp_total = self.machine_cover+self.human_cover
+                        for element in temp_store:
+                            if element in temp_total:
+                                temp_store.remove(element)
+                        take_choice = random.choice(temp_store)
+                        self.__sign_insert(take_choice)
+                        self.machine_cover.append(take_choice)
         
         elif self.chance_counter == 9:
             human_input = self.human_cover[len(self.human_cover)-1]
@@ -506,15 +512,14 @@ class TIC_TAC_TOE_AI:
                 self.prob.clear()
                 opposite_detection = {2: 8, 8: 2, 6: 4, 4: 6}
                 self.__sign_insert(opposite_detection[human_input])
-                messagebox.showwarning("Game Draw", "Game is draw")
-                self.game_over_management()
+                self.machine_line_match()
             else:
+                
                 if self.prob[0] in self.sign_store.keys():
                     self.__sign_insert(self.prob[1])
                 else:
                     self.__sign_insert(self.prob[0])
-                messagebox.showinfo("Game Over", "Computer is winner")
-                self.game_over_management(1)
+                self.machine_line_match()
 
 
     def __human_play(self, chance):# Human Control
@@ -522,10 +527,63 @@ class TIC_TAC_TOE_AI:
         self.__sign_insert(chance, "O")
         self.human_cover.append(chance)
         if self.chance_counter == 9:
-            messagebox.showwarning("Game Over", "Game Draw")
-            self.game_over_management()
+            self.human_line_match()
         else:    
             self.__machine_play()
+    
+    def machine_line_match(self):
+        found = 0
+        if self.activate_btn[1-1]['text'] == self.activate_btn[2-1]['text'] == self.activate_btn[3-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[4-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[6-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[7-1]['text'] == self.activate_btn[8-1]['text'] == self.activate_btn[9-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[1-1]['text'] == self.activate_btn[4-1]['text'] == self.activate_btn[7-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[2-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[8-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[3-1]['text'] == self.activate_btn[6-1]['text'] == self.activate_btn[9-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[1-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[9-1]['text'] == "X":
+            found=1
+        elif self.activate_btn[3-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[7-1]['text'] == "X":
+            found=1
+        if found == 1:
+            messagebox.showinfo("Game Over", "Computer is winner")
+            self.game_over_management()
+        elif self.chance_counter == 9:
+            messagebox.showinfo("Game Over", "Game draw")
+            self.game_over_management()
+    
+    def human_line_match(self):
+        found = 0
+        if self.activate_btn[1-1]['text'] == self.activate_btn[2-1]['text'] == self.activate_btn[3-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[4-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[6-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[7-1]['text'] == self.activate_btn[8-1]['text'] == self.activate_btn[9-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[1-1]['text'] == self.activate_btn[4-1]['text'] == self.activate_btn[7-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[2-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[8-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[3-1]['text'] == self.activate_btn[6-1]['text'] == self.activate_btn[9-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[1-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[9-1]['text'] == "O":
+            found=1
+        elif self.activate_btn[3-1]['text'] == self.activate_btn[5-1]['text'] == self.activate_btn[7-1]['text'] == "O":
+            found=1
+        if found == 1:
+            messagebox.showinfo("Game Over", "You are winner")
+            self.game_over_management()
+            return 0
+        elif self.chance_counter == 9:
+            messagebox.showinfo("Game Over", "Game draw")
+            self.game_over_management()
+            return 0
+        else:
+            return 1
 
 
 if __name__ == "__main__":
