@@ -5,9 +5,9 @@
 ![](https://img.shields.io/badge/Python_Version-3.7-brown.svg)
 ![](https://img.shields.io/badge/Status-Complete-green.svg)
 
-<h1 align="center"> ❤️ Hello Developers ❤️  </h1>
+<h3 align="center"> ❤️ Hello Developers ❤️  </h3>
 
-### <p align="center">  	😮 Now I am going to present you my New Game 	😮 </p>
+### <p align="center">  	😮 Presenting My New Python Game 	😮 </p>
 
 <p align="center"><img src="game_gif.gif"></p>
 
