@@ -7,7 +7,7 @@
 
 <h3 align="center"> ❤️ Welcome Developers ❤️  </h3>
 
-### <p align="center">  	😮 Presenting My New Python Game 	😮 </p>
+### <p align="center">  	😮 Presenting My New Game made in Python 	😮 </p>
 
 <p align="center"><img src="game_gif.gif"></p>
 
