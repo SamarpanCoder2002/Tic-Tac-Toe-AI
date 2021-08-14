@@ -30,4 +30,4 @@
 
 - #### [Follow Me on LinkedIn to Get Project Updates](https://www.linkedin.com/in/samarpan-dasgupta-4aa1061b0/ "LCO")
 
-<h2 align="center"><b>🧡 Thank You For Visiting 🙏, Have a Nice Day 🧡</b></h2>
+<h2 align="center"><b>❤️ Thank You For Visiting 🙏, Have a Nice Day ❤️</b></h2>
